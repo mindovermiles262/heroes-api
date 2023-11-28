@@ -2,10 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlmodel import Session, select
 from typing import List
 
-from database import get_session
+from db.database import get_session
 
 from models.team_model import TeamBase, Team, TeamCreate, TeamRead, TeamUpdate
-from models.superhero_model import TeamReadWithHeroes
+from models.heroteam_model import TeamReadWithHeroes
 
 router = APIRouter()
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from database import create_db_and_tables
+from db.database import create_db_and_tables
 
 from routers.hero_router import router as hero_router
 from routers.team_router import router as team_router

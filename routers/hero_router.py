@@ -3,21 +3,12 @@ from typing import List
 from fastapi import APIRouter, FastAPI, HTTPException, Query, Depends
 from sqlmodel import Session, select
 
-from database import create_db_and_tables, engine, get_session
+from db.database import create_db_and_tables, engine, get_session
 
 from models.hero_model import HeroBase, Hero, HeroRead, HeroCreate, HeroUpdate
-from models.superhero_model import HeroReadWithTeam, TeamReadWithHeroes
+from models.heroteam_model import HeroReadWithTeam, TeamReadWithHeroes
 
 router = APIRouter()
-
-
-@router.post('/heroes', response_model=HeroRead)
-def create_hero(*, hero: HeroCreate, session: Session = Depends(get_session)):
-    db_hero = Hero.from_orm(hero)
-    session.add(db_hero)
-    session.commit()
-    session.refresh(db_hero)
-    return db_hero
 
 
 @router.get('/heroes', response_model=List[HeroRead])
@@ -31,12 +22,21 @@ def read_heroes(
     return heroes
 
 
-@router.get('/heroes/{hero_id]', response_model=HeroReadWithTeam)
+@router.get('/heroes/{hero_id}', response_model=HeroReadWithTeam)
 def read_hero(*, hero_id: int, session: Session = Depends(get_session)):
     hero = session.get(Hero, hero_id)
     if not hero:
         raise HTTPException(status_code=404, detail="Hero not found")
     return hero
+
+
+@router.post('/heroes', response_model=HeroRead)
+def create_hero(*, hero: HeroCreate, session: Session = Depends(get_session)):
+    db_hero = Hero.from_orm(hero)
+    session.add(db_hero)
+    session.commit()
+    session.refresh(db_hero)
+    return db_hero
 
 
 @router.patch('/heroes/{hero_id}', response_model=HeroRead)
